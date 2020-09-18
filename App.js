@@ -48,6 +48,8 @@ export default function App() {
 
  // const [movieIds, setMoviIds] = useState([])
   //setMoviIds(movieData.id)
+  
+
 
   return (
     <View style={styles.container}>
@@ -70,10 +72,11 @@ export default function App() {
             
             return (<View>
             <Text>{item.id}</Text>
-            <Image source={{uri:item.photos[0]}} style={{width:80, height:80}}/>
+            
+            
             <FlatList 
-            data={item.id}
-            renderItem={({item})=><Text>{item}</Text>}
+            data={item.photos}
+            renderItem={({item})=><Image source={{uri:item.photo}} style={{width:80, height:80}}/>}
             />
             
             </View>
