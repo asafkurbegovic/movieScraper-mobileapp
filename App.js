@@ -76,7 +76,7 @@ export default function App() {
             
             <FlatList 
             data={item.photos}
-            renderItem={({item})=><Image source={{uri:item.photo}} style={{width:80, height:80}}/>}
+            renderItem={({item})=><Image source={{uri:item.photo}} style={{width:80, height:80, padding:10, marginVertical:10}}/>}
             />
             
             </View>
