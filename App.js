@@ -10,46 +10,35 @@ import {
   ListView,
   SectionList,
   Image,
+  TouchableOpacity,
 } from "react-native";
 //import ButtonHandler from "./components/ButtonHandler";
 
 export default function App() {
   const [movieName, setMovieName] = useState();
-  const [movieInfor, setMovieInfo] = useState([{id:'000',
-    photos:'src1'},
-    {id:'001',
-    photos:'src2'},
-    {id:'002',
-    photos:'src3'}]);
-  const [movieData, setMovieData] = useState([{id:[],
-  photos:[],
-  titles:[],
-  searchedMovie:[]}]);
+  const [movieID, setMovieID] = useState();
+  const [movieData, setMovieData] = useState([
+    { id: [], photos: [], titles: [], searchedMovie: [] },
+  ]);
 
   const movieSearchHandler = (name) => {
     return fetch("http://192.168.0.11:5000/" + name)
       .then((data) => data.json())
       .then((json) => {
-        //console.log('-------------------1')
-        //console.log(json.searchResult[0].ids);
-        //console.log('-------------------2')
-        setMovieData([{id:json.searchResult[0].ids,
-        photos:json.searchResult[0].photos,
-       // titles:json.searchResult[0].titles,
-        searchedMovie:json.searchedMovie}]);
-        //console.log('-------------------3')
+        setMovieData([
+          {
+            id: json.searchResult[0].ids,
+            photos: json.searchResult[0].photos,
+            searchedMovie: json.searchedMovie,
+          },
+        ]);
       })
       .catch((err) => console.log(err));
   };
 
-  // const searchResult=(movieData) => {
-  // setMovieInfo(movieData);
-  // }
-
- // const [movieIds, setMoviIds] = useState([])
-  //setMoviIds(movieData.id)
-  
-
+  const movieIDHandler = (setid) => {
+    setMovieID(movieData[0].id[setid])
+  };
 
   return (
     <View style={styles.container}>
@@ -65,27 +54,39 @@ export default function App() {
       />
 
       <View style={{ flex: 1, alignItems: "center" }}>
-        {console.log(movieData.titles)}
-        <FlatList 
+        <FlatList
           data={movieData}
-          renderItem={({item}) => {
-            
-            return (<View>
-            <Text>{item.id}</Text>
-            
-            
-            <FlatList 
-            data={item.photos}
-            renderItem={({item})=><Image source={{uri:item.photo}} style={{width:80, height:80, padding:10, marginVertical:10}}/>}
-            />
-            
-            </View>
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => {
+            return (
+              <View>
+                <Text>{item.id}</Text>
+
+                <FlatList
+                  horizontal
+                  data={item.photos}
+                  keyExtractor={(item) => item.photo.toString()}
+                  renderItem={({ item, index }) => (
+                    <TouchableOpacity onPress={() => movieIDHandler(index)}>
+                      <Image
+                        source={{ uri: item.photo }}
+                        style={{
+                          width: 80,
+                          height: 80,
+                          padding: 10,
+                          margin: 10,
+                        }}
+                      />
+                    </TouchableOpacity>
+                  )}
+                />
+              </View>
             );
           }}
-          
         />
         <StatusBar style="auto" />
       </View>
+      
     </View>
   );
 }
