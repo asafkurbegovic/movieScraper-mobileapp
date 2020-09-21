@@ -7,12 +7,9 @@ import {
   Button,
   TextInput,
   FlatList,
-  ListView,
-  SectionList,
   Image,
   TouchableOpacity,
 } from "react-native";
-//import ButtonHandler from "./components/ButtonHandler";
 
 export default function App() {
   const [movieName, setMovieName] = useState();
@@ -37,7 +34,10 @@ export default function App() {
   };
 
   const movieIDHandler = (setid) => {
-    setMovieID(movieData[0].id[setid])
+    setMovieID(movieData[0].id[setid]);
+    fetch("https://www.imdb.com/title/" + movieID).then(data=> data.json()).then(json=>{
+      //TODO grab infos from python API and store it in elements
+    })
   };
 
   return (
@@ -47,11 +47,7 @@ export default function App() {
         style={styles.input}
         onChangeText={(text) => setMovieName(text)}
       />
-      <Button
-        title="Search"
-        onPress={() => movieSearchHandler(movieName)}
-        //   searchData={props.onSearchResult(movieData)}
-      />
+      <Button title="Search" onPress={() => movieSearchHandler(movieName)} />
 
       <View style={{ flex: 1, alignItems: "center" }}>
         <FlatList
@@ -61,7 +57,6 @@ export default function App() {
             return (
               <View>
                 <Text>{item.id}</Text>
-
                 <FlatList
                   horizontal
                   data={item.photos}
@@ -86,7 +81,8 @@ export default function App() {
         />
         <StatusBar style="auto" />
       </View>
-      
+
+      <View></View>
     </View>
   );
 }
@@ -105,8 +101,3 @@ const styles = StyleSheet.create({
     width: "80%",
   },
 });
-/*<ButtonHandler
-        movieName={movieName}
-        onSearchResult={searchResult}
-        
-      />*/
