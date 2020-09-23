@@ -10,6 +10,7 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
+import ResultHandler from './components/ResultHandler'
 
 export default function App() {
   const [movieName, setMovieName] = useState();
@@ -17,6 +18,11 @@ export default function App() {
   const [movieData, setMovieData] = useState([
     { id: [], photos: [], titles: [], searchedMovie: [] },
   ]);
+  const [results, setResults] = useState({
+    rating: "",
+    title: "",
+    image: './assets/imdb.jpg',
+  });
 
   const movieSearchHandler = (name) => {
     return fetch("http://192.168.0.11:5000/" + name)
@@ -35,28 +41,38 @@ export default function App() {
 
   const movieIDHandler = (setid) => {
     setMovieID(movieData[0].id[setid]);
-    fetch("https://www.imdb.com/title/" + movieID).then(data=> data.json()).then(json=>{
-      //TODO grab infos from python API and store it in elements
-    })
+    console.log(movieID);
+    return fetch("http://192.168.0.11:5000/id/" + movieID)
+      .then((res) => res.json())
+      .then((json) => {console.log(json.result.photo)
+      setResults({
+        rating:json.result.movieRating,
+        title:json.result.movieTitle,
+        image:json.result.photo
+      })
+      })
+      .catch((err) => console.log("Error:" + err));
   };
+
+  
 
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+      <Text style={{fontSize:16}}>Enter name of movie you are interested in</Text>
       <TextInput
         style={styles.input}
         onChangeText={(text) => setMovieName(text)}
       />
       <Button title="Search" onPress={() => movieSearchHandler(movieName)} />
 
-      <View style={{ flex: 1, alignItems: "center" }}>
+      <View style={{marginVertical:10, flex: 1, alignItems: "center" }}>
         <FlatList
           data={movieData}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => {
             return (
               <View>
-                <Text>{item.id}</Text>
+                
                 <FlatList
                   horizontal
                   data={item.photos}
@@ -81,7 +97,7 @@ export default function App() {
         />
         <StatusBar style="auto" />
       </View>
-
+          <ResultHandler style={styles.result} title={results.title} rating={results.rating} image={results.image} />
       <View></View>
     </View>
   );
@@ -93,11 +109,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 200,
+    marginTop: 100,
   },
   input: {
     borderColor: "#ccc",
     borderWidth: 1,
     width: "80%",
+    marginVertical:10
   },
+  result:{
+    alignItems:'center',
+    justifyContent:'center',
+    flex:2
+  }
 });
